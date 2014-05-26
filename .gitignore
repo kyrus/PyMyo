@@ -1,0 +1,9 @@
+*.pyc
+modules/geoip/GeoLiteCity.dat
+modules/geoip/GeoLiteCityv6.dat
+.pymyo.history
+.pymyo_console.history
+pyMyo.wpu
+.idea
+*.egg-info
+
