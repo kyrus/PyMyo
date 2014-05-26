@@ -27,12 +27,15 @@ The current functionality & shortcuts can be summarised as:
     'list'               - list the available modules
     'info <module name>' - Show module metadata
     <module name> arg1 arg2 ... - run module on list of arguments
-    <enter>          - run previous command
-    <module name> enter - without args runs the stated module with the last argument specified
-    <tab>            - autocomplete
-    <up>, <down>     - browse shell history, separate histories are kept for pyMyo shell, system shells & python shells. All histories are saved and restored each session for persistent history 
+    <enter>              - run previous command
+    <module name> enter  - without args runs the stated module with the last argument specified
+    <tab>                - autocomplete
+    <up>, <down>         - browse shell history, separate histories are kept for pyMyo shell, system shells & python shells. All histories are saved and restored each session for persistent history 
                        
-    <math expression> - any command that starts with a digit will be evaluated as a math expression using standard Python mathematical operators and rules 
+    <math expression>    - any command that starts with a digit will be evaluated as a math expression using standard Python mathematical operators and rules
+    
+    'reload'             - Cause pyMyo to reload all the command modules without restarting pyMyo, useful for debugging / developing new command modules
+    'debug'              - Toggle debugging output, useful when things are breaking
     
     'q','exit', 'ctrl-d', 'ctrl-c' - quit pyMyo
     
@@ -84,11 +87,9 @@ __help__    = "A useful string of test about the module"
 __alias__   = ["t", "t3st"]
 
 def Command(pymyo, name, *args):
-    
     print "This is a test command."
     if args:
         pymyo.output( "The arguments passed were %s"%args)
-        
     pymyo.notify("The reference back to the pymyo instance is: %s"%(pymyo))
 
 ```
