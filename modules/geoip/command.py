@@ -40,7 +40,7 @@ def Command(pymyo, name, *args):
         gi = pygeoip.GeoIP(os.path.join(MODULE_LOCATION, "GeoLiteCity.dat"))
         record = gi.record_by_addr(args[0])
         pymyo.output("ipv4 :\t%s"%(args[0]))
-        parse_record(pybitch, record)        
+        parse_record(pymyo, record)
         return None
     except Exception, err:
         pass
@@ -60,7 +60,7 @@ def Command(pymyo, name, *args):
         gi = pygeoip.GeoIP(os.path.join(MODULE_LOCATION, "GeoLiteCity.dat"))
         record = gi.record_by_name(args[0])
         pymyo.output("hostname :\t%s"%(args[0]) )
-        parse_record(pybitch,record)
+        parse_record(pymyo,record)
         return None
     except Exception, err:
         pymyo.error("Unable to use geoip lookup on %s"%(target))

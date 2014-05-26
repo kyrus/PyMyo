@@ -48,7 +48,8 @@ class pyMyo(object):
         config_defaults = {"prompt" : "pymyo #",
                            "shell"  : "/bin/bash",
                            "use_ipy":  "False",
-                           "debug"  :  "False"
+                           "debug"  :  "False",
+                           "banner" :  "True"
                            }
         
         ##Read config
@@ -58,7 +59,8 @@ class pyMyo(object):
         self.prompt   = self.config.get("Config", "prompt")+" " 
         self.shell    = self.config.get("Config", "shell")
         self.use_ipy  = self.config.getboolean("Config", "use_ipy")
-        self.debug    = self.config.getboolean("Config", "debug")        
+        self.debug    = self.config.getboolean("Config", "debug")
+        self.banner   = self.config.getboolean("Config", "banner")
         
         
     def __call__(self):
@@ -89,13 +91,21 @@ class pyMyo(object):
         #    m_obj = reload(m_obj)
         #    self.available_modules[m_name] = m_obj
             
-        print sys.modules["_pyMyo"]
-            
         ## Reload pyMyo itself - this reloads the module but the class still needs to be reinstantiated
         pymyo_mod = reload(sys.modules["_pyMyo"])
 
         ##Marker to get the class reinstantiated from the caller - this must be returned by the subclasses __call__ method
         self.reload_pymyo = True
+
+    def change_debug_state(self):
+        """
+        Flip debug flag to opposite state - 'on' to 'off', 'off' to 'on'
+        """
+        if self.debug:
+            self.debug = False
+        else:
+            self.debug = True
+
         
     def populate_aliases(self):
         """

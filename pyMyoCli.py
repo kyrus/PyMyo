@@ -39,7 +39,7 @@ class pyMyoCli(pyMyo, cmd.Cmd):
     General CLI/Shell wrapper for the invocation of modules that
     help with a whole variety of nifty things
     """ 
-    def __init__(self, banner = True):
+    def __init__(self):
         """
         Set some defaults
         """
@@ -54,7 +54,7 @@ class pyMyoCli(pyMyo, cmd.Cmd):
         self.shotcuts            = ["!", ">", "=", "$"]
         self.autoarg_exceptions  = ["help", "console", "shell"]
 
-        if banner:
+        if self.banner:
 
             self.intro = """
    ___       \033[35m__  ___\033[0m
@@ -327,6 +327,14 @@ class pyMyoCli(pyMyo, cmd.Cmd):
         ##Cause the cmdloop to exit so the pymyo class itself can be reinistantiated to take account of
         ## any changes in the reloaded pymyo module
         return True
+
+
+    def do_debug(self, line):
+        """
+        Turn debugging on/off
+        """
+        self.change_debug_state()
+        self.output("Debugging = %s"%(self.debug))
 
 
     def do_new_module(self, line):
