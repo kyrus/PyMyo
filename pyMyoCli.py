@@ -7,7 +7,6 @@ import sys
 import code
 import readline
 import traceback
-import rlcompleter
 
 from _pyMyo import pyMyo
 
@@ -43,7 +42,7 @@ class pyMyoCli(pyMyo, cmd.Cmd):
         """
         Set some defaults
         """
-        ##Init pyMyo - super does not work correctly ...... ?
+        ##Init pyMyo - super does not work correctly ......
         pyMyo.__init__(self)
 
         ##Init parser loop
@@ -62,6 +61,9 @@ class pyMyoCli(pyMyo, cmd.Cmd):
  / ___/ // \033[35m/ /|_/ / // / _ \\\033[0m
 /_/   \\_, \033[35m/_/  /_/\\_, /\\___/\033[0m
      /___/       \033[35m/___/\033[0m"""+" v %s\n"%(__version__)
+
+        ##For tab-completion logic
+        self.command_that_take_module_as_args = ["help", "info"]
 
 
     def _main(self):
@@ -248,7 +250,7 @@ class pyMyoCli(pyMyo, cmd.Cmd):
         console = code.InteractiveConsole()
         banner = "** \033[35mPress Ctrl-D to exit back to the pyMyo shell\033[0m **\n"
         banner += "Python %s on %s"%(sys.version, sys.platform)
-        console.runsource("import sys;sys.ps1='pB >>> '")
+        console.runsource("import sys;sys.ps1='%s >>> '"%(self.prompt.split(" ")[0]))
         console.interact(banner)
         
         ##Save console history and Restore previous pyMyo history
@@ -304,9 +306,12 @@ class pyMyoCli(pyMyo, cmd.Cmd):
         Display metadata about a specified module
         """
         split_line = line.split(" ")
-        
+
+        if split_line[0] == '':
+            self.output("Supply a module name to get info on it:  `info <module_name>`")
+            return None
+
         info_dict = self.get_module_info(split_line[0])
-        
         if not info_dict:
             self.output("No info available for %s "%(split_line[0]))
         
@@ -342,7 +347,40 @@ class pyMyoCli(pyMyo, cmd.Cmd):
         Create a skeleton directory for a new module - will then need to be hand coded
         """
         #todo
-        
+
+
+    ##Tab-completion logic
+    def completedefault(self, text, line, begidx, endidx):
+        """
+        Do the dance to enable tab-complete of a pyMyo module after a command that expects a module
+        name as an arg e.g. info
+        """
+        ##Only do this sub module complete for certain commands
+        if line.split(" ")[0] not in self.command_that_take_module_as_args:
+            return None
+
+        line = line.split(" ")[1]
+        return self.completenames(text, line, begidx, endidx, include_cmd_completes = False)
+
+
+    def completenames(self, text, line, begidx, endidx, include_cmd_completes = True):
+        """
+        Do the dance to enable tab-complete of a pyMyo module names bare on the commandline as is needed
+        to run such a module
+        """
+        ##Get possible commands to tabcomplete?
+        if include_cmd_completes:
+            dotext = 'do_'+text
+            cmd_complete_list = [a[3:] for a in self.get_names() if a.startswith(dotext)]
+        else:
+            cmd_complete_list = []
+
+        ##Get possible module names to tabcomplete
+        offs = len(line) - len(text)
+        module_complete_list = [s[offs:] for s in self.available_modules.keys() if s.startswith(line)]
+        return cmd_complete_list + module_complete_list
+    ##//Tab-completion logic
+
     
     def default(self, line):
         """
@@ -374,7 +412,6 @@ class pyMyoCli(pyMyo, cmd.Cmd):
             
         except Exception, err:
             self.output( self.ruler*70 )
-            print err
             self.error("Error executing command '%s' "%(line))
             self._error()
             self.output( self.ruler*70 )
@@ -440,9 +477,9 @@ if __name__ == "__main__":
     
     try:
         ##Kick off the interpreter loop
-        pbc = pyMyoCli()
-        pbc()
+        pmc = pyMyoCli()
+        pmc()
         
     except KeyboardInterrupt:
         print "Ctrl-C caught. Exiting"
-        pbc.postloop()
+        pmc.postloop()

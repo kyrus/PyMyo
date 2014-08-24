@@ -45,7 +45,7 @@ class pyMyo(object):
         Read and set configuration variables
         """
         ##Set defaults incase config file is corrupted
-        config_defaults = {"prompt" : "pymyo #",
+        config_defaults = {"prompt" : "pymyo",
                            "shell"  : "/bin/bash",
                            "use_ipy":  "False",
                            "debug"  :  "False",
@@ -56,7 +56,7 @@ class pyMyo(object):
         self.config = ConfigParser.SafeConfigParser(defaults = config_defaults)
         self.config.read(os.path.join(MODULE_LOCATION, "pyMyo.conf"))
         
-        self.prompt   = self.config.get("Config", "prompt")+" " 
+        self.prompt   = self.config.get("Config", "prompt")+" # "
         self.shell    = self.config.get("Config", "shell")
         self.use_ipy  = self.config.getboolean("Config", "use_ipy")
         self.debug    = self.config.getboolean("Config", "debug")
